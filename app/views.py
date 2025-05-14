@@ -68,7 +68,7 @@ def verify():
 def webhook_get():
     return verify()
 
-@webhook_blueprint.route("/check", methods=["GET"]) #access this one with bot
+@webhook_blueprint.route("/check", methods=["GET", "HEAD"]) #access this one with bot
 def check():
     return async_checking()
 
