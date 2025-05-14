@@ -5,6 +5,7 @@ from waitress import serve
 
 app = create_app()
 
+
 if __name__ == "__main__":
     logging.info("App Online")
     port = int(os.environ.get("PORT", 8080))
