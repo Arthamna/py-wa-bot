@@ -2,6 +2,7 @@ import pg8000
 import os
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from typing import List, Tuple, Optional, Dict, Any
 
 class ScheduleManager:
@@ -94,7 +95,7 @@ class ScheduleManager:
         conn = self._get_connection()
         cursor = conn.cursor()
 
-        now = datetime.now()
+        now = datetime.now(ZoneInfo("Asia/Jakarta"))
         if month is None :
             month = self._month_names[now.month]
         if date is None :
@@ -122,7 +123,7 @@ class ScheduleManager:
 
     def get_today_schedules(self) -> Tuple[str, List[Tuple[str, str]]]:
 
-        today = datetime.now()
+        today = datetime.now(ZoneInfo("Asia/Jakarta"))
         current_date = today.day
         month_name = self._month_names[today.month]
             
@@ -142,7 +143,7 @@ class ScheduleManager:
 
     def get_weekly_schedules(self) -> List[Tuple[str, str, str, str]]:
 
-        today = datetime.now()
+        today = datetime.now(ZoneInfo("Asia/Jakarta"))
         start_of_week = today - timedelta(days=today.weekday())
         
         week_dates = []
@@ -170,7 +171,7 @@ class ScheduleManager:
     # check every 30 min
     def check_schedules(self) -> Dict[str, List[Dict[str, str]]]:
 
-        now = datetime.now()
+        now = datetime.now(ZoneInfo("Asia/Jakarta"))
         current_day = now.day
         current_month = now.month
         current_time = now.strftime("%H:%M")
@@ -203,7 +204,8 @@ class ScheduleManager:
     def update_activity_name(self, activity: str, date: Optional[str], month : Optional[str] ,new_activity: str) -> bool: 
 
         if month is None :
-            now = datetime.now()
+            now = datetime.now(ZoneInfo("Asia/Jakarta"))
+
             month = self._month_names[now.month]
         if date is None :
             date = now.day
@@ -235,7 +237,8 @@ class ScheduleManager:
         self._validate_date(new_date)
 
         if month is None:
-            now = datetime.now()
+            now = datetime.now(ZoneInfo("Asia/Jakarta"))
+
             month = self._month_names[now.month]  
         
         try:
@@ -257,7 +260,8 @@ class ScheduleManager:
     def remove_activity(self, activity: str,  date : Optional[str] , month: Optional[str] ) -> bool:
 
         if month is None:
-            now = datetime.now()
+            now = datetime.now(ZoneInfo("Asia/Jakarta"))
+
             month = self._month_names[now.month] 
         if date is None :
             date = now.day
@@ -282,7 +286,7 @@ class ScheduleManager:
         return success
     
     def clean_outdated_activities(self):
-        now = datetime.now()
+        now = datetime.now(ZoneInfo("Asia/Jakarta"))
         current_year = now.year
 
         conn = self._get_connection()

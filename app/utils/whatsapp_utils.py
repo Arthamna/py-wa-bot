@@ -6,6 +6,7 @@ from app.database import ScheduleManager
 import re
 import sqlite3
 from datetime import datetime 
+from zoneinfo import ZoneInfo
 
 def log_http_response(response):
     logging.info(f"Status: {response.status_code}")
@@ -26,7 +27,7 @@ def get_text_message_input(recipient, text):
 
 def async_checking():
     try:
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        current_time = datetime.now(ZoneInfo("Asia/Jakarta")).strftime("%Y-%m-%d %H:%M:%S")
         logging.info(f"{current_time} : Running schedule check ")
         
         schedule_data = manager.check_schedules()
