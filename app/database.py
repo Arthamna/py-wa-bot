@@ -304,7 +304,7 @@ class ScheduleManager:
             except Exception:
                 continue
 
-            if sched_dt < now:
+            if sched_dt.replace(tzinfo=ZoneInfo("Asia/Jakarta")) < now:
                 cursor.execute("DELETE FROM schedules WHERE id = %s", (_id,))
 
         conn.commit()
