@@ -186,7 +186,7 @@ class ScheduleManager:
 
         cursor.execute(
             """
-            SELECT activity, time FROM schedules WHERE date = %s AND time::time > %s::time AND time::time <= %s::time
+            SELECT activity, time FROM schedules WHERE date = %s AND month = %s AND time::time > %s::time AND time::time <= %s::time
             """,
             (str(current_day), self._month_names[current_month], current_time, future_time)
         )
