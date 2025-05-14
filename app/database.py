@@ -1,11 +1,12 @@
-import sqlite3
+import pg8000
+import os
+from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from typing import List, Tuple, Optional, Dict, Any
 
 class ScheduleManager:
     
-    def __init__(self, db_path: str = 'schedule.db'):
-        self.db_path = db_path
+    def __init__(self):
         self._init_db()
 
         self._month_names = {
@@ -26,12 +27,12 @@ class ScheduleManager:
 
     
     def _init_db(self) -> None:
-        conn = sqlite3.connect(self.db_path)
+        conn = self._get_connection()
         cursor = conn.cursor()
         
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS schedules (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id SERIAL PRIMARY KEY,
                 time TEXT NOT NULL,
                 date TEXT NOT NULL,
                 month TEXT NOT NULL,
@@ -42,8 +43,16 @@ class ScheduleManager:
         conn.commit()
         conn.close()
     
-    def _get_connection(self) -> sqlite3.Connection:
-        return sqlite3.connect(self.db_path)
+    def _get_connection(self) -> pg8000.Connection:
+        load_dotenv()
+        conn = pg8000.connect(
+            user     = os.getenv("DB_USER"),
+            password  = os.getenv("DB_PASS"),
+            host  = os.getenv("DB_HOST"),
+            port  = os.getenv("DB_PORT"),
+            database  = os.getenv("DB_NAME"),
+        )
+        return conn
     
     def _validate_time_format(self, time_str: str) -> bool:
         try:
@@ -66,7 +75,7 @@ class ScheduleManager:
         conn = self._get_connection()
         cursor = conn.cursor()
         
-        cursor.execute("SELECT id, date, time, activity, month FROM schedules WHERE activity = ? AND date = ? AND month = ?", (activity, date, month))
+        cursor.execute("SELECT id, date, time, activity, month FROM schedules WHERE activity = %s AND date = %s AND month = %s", (activity, date, month))
         row = cursor.fetchone()
         conn.close()
         
@@ -74,7 +83,7 @@ class ScheduleManager:
             raise ValueError(f"No schedule found with activity: {activity}")
         
         return {
-        "id":     row[0],   
+        "id":     row[0],       
         "date":     row[1],   
         "time":     row[2],   
         "activity": row[3],   
@@ -94,13 +103,13 @@ class ScheduleManager:
         self._validate_time_format(time)
         self._validate_date(date)
         self._validate_month(month)
-        cursor.execute("SELECT COUNT(*) FROM schedules WHERE date = ? AND activity = ? AND time = ? ", (date, activity, time))
+        cursor.execute("SELECT COUNT(*) FROM schedules WHERE date = %s AND activity = %s AND time = %s ", (date, activity, time))
         if cursor.fetchone()[0] > 0:
             conn.close()
             raise ValueError(f"An activity with the name '{activity}' already exists")
         
         cursor.execute(
-            "INSERT INTO schedules (time, date, month, activity) VALUES (?, ?, ?, ?)",
+            "INSERT INTO schedules (time, date, month, activity) VALUES (%s, %s, %s, %s)",
             (time, date, month, activity)
         )
                 
@@ -121,7 +130,7 @@ class ScheduleManager:
         cursor = conn.cursor()
             
         cursor.execute(
-            "SELECT time, activity FROM schedules WHERE date = ? AND month = ? ORDER BY time",
+            "SELECT time, activity FROM schedules WHERE date = %s AND month = %s ORDER BY time",
             (current_date, month_name)
         )
         schedules = cursor.fetchall()
@@ -147,7 +156,7 @@ class ScheduleManager:
         all_schedules = []
         
         for date, month in week_dates:
-            cursor.execute(""" SELECT time, activity, date, month FROM schedules WHERE date = ? AND month = ? ORDER BY time """, (date, month))
+            cursor.execute(""" SELECT time, activity, date, month FROM schedules WHERE date = %s AND month = %s ORDER BY time """, (date, month))
             
             day_schedules = cursor.fetchall()
             all_schedules.extend(day_schedules)
@@ -167,7 +176,7 @@ class ScheduleManager:
         current_time = now.strftime("%H:%M")
 
         #range notification
-        future_time_dt = now + timedelta(minutes=30)
+        future_time_dt = now + timedelta(minutes=35)
         future_time = future_time_dt.strftime("%H:%M")
 
         conn = self._get_connection()
@@ -177,7 +186,7 @@ class ScheduleManager:
 
         cursor.execute(
             """
-            SELECT activity, time FROM schedules WHERE date = ? AND month = ? AND time > ? AND time <= ?
+            SELECT activity, time FROM schedules WHERE date = %s AND month = %s AND time > %s AND time <= %s
             """,
             (str(current_day), self._month_names[current_month], current_time, future_time)
         )
@@ -211,7 +220,7 @@ class ScheduleManager:
         cursor = conn.cursor()
 
         cursor.execute(
-            "UPDATE schedules SET activity = ? WHERE id = ?",
+            "UPDATE schedules SET activity = %s WHERE id = %s",
             (new_activity, schedule["id"])
         )
 
@@ -237,7 +246,7 @@ class ScheduleManager:
         conn = self._get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "UPDATE schedules SET date = ? WHERE id = ?", (new_date, schedule["id"]))
+            "UPDATE schedules SET date = %s WHERE id = %s", (new_date, schedule["id"]))
         
         success = (cursor.rowcount == 1)
         conn.commit()
@@ -264,7 +273,7 @@ class ScheduleManager:
         except ValueError:
             return False
         
-        cursor.execute("DELETE FROM schedules WHERE activity = ? AND id = ?", (activity, schedule["id"]))
+        cursor.execute("DELETE FROM schedules WHERE activity = %s AND id = %s", (activity, schedule["id"]))
         
         success = cursor.rowcount > 0
         conn.commit()
@@ -292,7 +301,7 @@ class ScheduleManager:
                 continue
 
             if sched_dt < now:
-                cursor.execute("DELETE FROM schedules WHERE id = ?", (_id,))
+                cursor.execute("DELETE FROM schedules WHERE id = %s", (_id,))
 
         conn.commit()
         conn.close()
