@@ -10,6 +10,7 @@ def create_app():
     load_configurations(app)
     configure_logging()
 
+    # load function
     app.register_blueprint(webhook_blueprint)
     ScheduleManager().__init__()
 

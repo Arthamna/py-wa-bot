@@ -4,7 +4,7 @@ import json
 import requests
 from app.database import ScheduleManager
 import re
-import sqlite3
+import pg8000
 from datetime import datetime 
 from zoneinfo import ZoneInfo
 
@@ -143,7 +143,7 @@ def is_valid_whatsapp_message(body):
 
 
 
-# passing data
+# command list
 def process_add_command(message_body, manager):
     pattern = r'^tambah(\s+.+?)\s+jam\s+(\d{1,2}:\d{2})(?:\s+tanggal\s+(\d{1,2})(?:\s+(\w+))?)?$'
     match = re.match(pattern, message_body, re.IGNORECASE)
@@ -158,7 +158,7 @@ def process_add_command(message_body, manager):
 
     try:
         response = manager.add_schedule(time=time, date=date, month=month, activity=activity)
-    except sqlite3.IntegrityError as e:
+    except pg8000.IntegrityError as e:
         response = f"DB constraint error: {e}"
     except ValueError as e:
         response = f"Validation error: {e}"
@@ -268,7 +268,7 @@ def delete_activity(message_body, manager):
         else:
             return f"Aktivitas '{activity}' tidak ditemukan."
 
-    except sqlite3.IntegrityError as e:
+    except pg8000.IntegrityError as e:
         response = f"DB constraint error: {e}"
     except ValueError as e:
         response = f"Validation error: {e}"
