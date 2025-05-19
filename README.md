@@ -54,11 +54,11 @@ All of the command is written in indonesian language. To configure it, go to [he
 3. Familiarity with Python to follow the tutorial.
 4. Knowledge with relational database, preferably PostgreSQL. 
 5. Once your database is initialized, set the following environment variables :
-DB_PASS="" 
-DB_HOST="" 
-DB_USER="" 
-DB_PORT="" 
-DB_NAME="" 
+  - DB_PASS="" 
+  - DB_HOST="" 
+  - DB_USER="" 
+  - DB_PORT="" 
+  - DB_NAME="" 
 
 
 ## Get Started
