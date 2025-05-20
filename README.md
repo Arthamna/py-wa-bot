@@ -1,11 +1,6 @@
 # WhatsApp Scheduler Bots with Python
 
-This is a WhatsApp bot using the Meta (formerly Facebook) Cloud API, Python and Flask. In this documentation, we'll doing these steps to create the bot :
-1. Set up a Flask app that exposes webhook endpoints for real‑time incoming messages
-2. Configure the Meta Cloud API client to send and receive WhatsApp messages
-3. Integrate a PostgreSQL database to store scheduling data.
-4. Implement Python logic to process incoming webhooks and generate responses.
-
+This is a WhatsApp bot using the Meta (formerly Facebook) Cloud API, Python and Flask.  
 ## Table of Contents
 
 - [WhatsApp Scheduler Bots with Python](#whatsapp-scheduler-bots-with-python)
