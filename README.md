@@ -54,12 +54,13 @@ All of the command is written in indonesian language. To configure it, go to [he
 3. Familiarity with Python to follow the tutorial.
 4. Knowledge with relational database, preferably PostgreSQL. 
 5. Once your database is initialized, set the following environment variables :
-  - DB_PASS="" 
-  - DB_HOST="" 
-  - DB_USER="" 
-  - DB_PORT="" 
-  - DB_NAME="" 
-
+  ```env
+  DB_PASS
+  DB_HOST
+  DB_USER
+  DB_PORT
+  DB_NAME 
+  ```
 
 ## Get Started
 
@@ -155,13 +156,7 @@ In the Meta App Dashboard, go to WhatsApp > Configuration, then click the Edit b
 1. In your Vercel Dashboard, select your project.
 2. In your Vercel project, go to Settings → Environment Variables
 3. Add each key from your local .env, then save it:
-  ```env
-  DB_PASS
-  DB_HOST
-  DB_USER
-  DB_PORT
-  DB_NAME 
-  ```
+
 
 Wait for the project to build, and voila! Your scheduler bot is ready to use. Just use the command you set up!  
 
