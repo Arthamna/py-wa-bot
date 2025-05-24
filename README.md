@@ -18,7 +18,7 @@ This is a WhatsApp bot using the Meta (formerly Facebook) Cloud API, Python and 
       - [Option A: Vercel CLI](#option-a-vercel-cli)
       - [Option B: Vercel Dashboard](#option-b-vercel-dashboard)
       - [Configure Environment Variables](#configure-environment-variables)
-  - [Suplementary : Uptime Monitoring](#suplementary-uptime-monitoring)
+  - [Suplementary : Uptime Monitoring and Scheduling Notifications](#suplementary-uptime-monitoring-and-scheduling-notifications)
 
 ## Command List
 All of the command is written in indonesian language. To configure it, go to [here](https://github.com/Arthamna/py-wa-bot/blob/main/app/utils/whatsapp_utils.py).
@@ -155,9 +155,8 @@ In the Meta App Dashboard, go to WhatsApp > Configuration, then click the Edit b
 
 Wait for the project to build, and voila! Your scheduler bot is ready to use. Just use the command you set up!  
 
-## Suplementary: Uptime Monitoring
-Keep your service awake with [UptimeRobot](https://uptimerobot.com/).
-Monitor the /check endpoint to prevent timeouts.
+## Suplementary: Uptime Monitoring and Scheduling Notifications
+The /check endpoint runs a background task that looks for any upcoming scheduled events. By default, it will trigger 35 minutes before an event’s start time. Whenever a future appointment or reminder within that interval is detected, the endpoint will fire off the appropriate notification. Monitor the /check endpoint with [UptimeRobot](https://uptimerobot.com/) to ensure timely notifications.
 
 
 
